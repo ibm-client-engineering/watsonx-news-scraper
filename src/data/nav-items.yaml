@@ -1,0 +1,20 @@
+- title: Project Overview
+  pages:
+    - path: /project-overview/project-overview
+- title: Business Background
+  pages:
+    - path: /business-background/business-challenges
+- title: Technical Solution
+  pages:
+    - title: Prepare
+      path: /technical-solution/prepare/prepare
+    - title: Create
+      path: /technical-solution/create/create
+    - title: Use Cases
+      path: /technical-solution/use-cases/use-cases
+    - title: Takeaways
+      path: /technical-solution/takeaways/takeaways
+    - title: Resources
+      path: /technical-solution/resources/resources
+    - title: Weekly Sprints
+      path: /technical-solution/weekly-sprints/weekly-sprints

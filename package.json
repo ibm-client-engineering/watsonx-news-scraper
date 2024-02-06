@@ -1,0 +1,26 @@
+{
+  "name": "website",
+  "private": true,
+  "version": "0.0.0",
+  "license": "Apache 2.0",
+  "scripts": {
+    "dev": "gatsby develop -H 0.0.0.0",
+    "deploy": "gatsby build --prefix-paths", 
+    "dev:clean": "gatsby clean && gatsby develop -H 0.0.0.0",
+    "build": "gatsby build --prefix-paths",
+    "build:clean": "yarn clean && gatsby build",
+    "serve": "gatsby serve",
+    "clean": "gatsby clean"
+  },
+  "dependencies": {
+    "gatsby": "^5.13.1",
+    "gatsby-plugin-google-gtag": "^5.13.0",
+    "gatsby-plugin-manifest": "^5.13.0",
+    "gatsby-remark-mermaid": "^4.0.0",
+    "gatsby-theme-carbon": "^3.2.3",
+    "gatsby-transformer-remark": "^6.13.0",
+    "punycode": "^2.3.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
