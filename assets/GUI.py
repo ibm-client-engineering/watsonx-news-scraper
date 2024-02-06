@@ -1,6 +1,7 @@
 import pandas as pd
 import streamlit as st
 from Webscrape import *
+from Watsonx_connection import do_single_llm
 
 st.set_page_config(layout="wide")
 st.title("Watson:blue[x] Webscraper")
@@ -24,8 +25,11 @@ def do_webscrape() :
     return create_df(combined_articles)
 
 def refresh() :
-   
    create_df.clear()
+
+def run_wx_single(df, i) :
+   st.session_state['analysis_run'][i] = 1
+   do_single_llm(df, i)
    
 
 # tab1, tab2 = st.tabs(['CNN', 'CNBC'])
@@ -35,6 +39,7 @@ if 'button_clicked' not in st.session_state :
    st.session_state['button_clicked'] = False
 if 'article_id' not in st.session_state :
    st.session_state['article_id'] = -1
+
 topcol1, topcol2 = st.columns([.85, .1])
 with topcol2 :
    st.button("Refresh Webscrape", on_click=refresh, key="refresh_button")
@@ -45,7 +50,10 @@ col1, col2 = st.columns([.3, .7])
 
 #Program
 df = do_webscrape()
+num_articles, _ = df.shape
 
+if 'analysis_run' not in st.session_state :
+   st.session_state['analysis_run'] = [0] * num_articles
 
 if st.session_state['selected'] :
     source_df = df.loc[df['Source'] == st.session_state['source_selection']]
@@ -60,8 +68,13 @@ if st.session_state['selected'] :
 
 if st.session_state['button_clicked'] :
     with col2:
+      st.subheader(df.iloc[st.session_state['article_id']]['Title'])
       st.write(df.iloc[st.session_state['article_id']]['Text'])
-      st.table(df.iloc[st.session_state['article_id'], 4:12])
+      if st.session_state['analysis_run'][st.session_state['article_id']] == 1 :
+         st.dataframe(df.iloc[st.session_state['article_id'], 4:12])
+      else :
+         st.button("Run Watsonx Analysis", on_click=run_wx_single, args=(df, st.session_state['article_id']))
+      
 
 
 

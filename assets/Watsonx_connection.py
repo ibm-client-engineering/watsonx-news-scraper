@@ -55,11 +55,11 @@ def run_llm(df) :
     prompt_f = open("Prompt.txt")
     prompt_text = prompt_f.read()
 
-    #Intialize the dataframe to add the 5 extra columns
-    cols_to_add = ["Country", "ShortTerm_IRtrend", "LongTerm_IRtrend", "ConsumerSpending", "Production", "Employment", "Inflation", "Geopolitics", "NetSentiment"]
-    for i in range(len(cols_to_add)) :
-        df.insert(row_len, cols_to_add[i], None)
-        row_len += 1
+    # #Intialize the dataframe to add the 5 extra columns
+    # cols_to_add = ["Country", "ShortTerm_IRtrend", "LongTerm_IRtrend", "ConsumerSpending", "Production", "Employment", "Inflation", "Geopolitics", "NetSentiment"]
+    # for i in range(len(cols_to_add)) :
+    #     df.insert(row_len, cols_to_add[i], None)
+    #     row_len += 1
 
     #Running LLM
     results = []
@@ -76,3 +76,19 @@ def run_llm(df) :
         except:
             results.append({})
             print(f'Error reconverting output to dictionary on row {i}')
+
+
+def do_single_llm(df, i) :
+    prompt_f = open("Prompt.txt")
+    prompt_text = prompt_f.read()
+    articleTitle = df.iloc[i]['Title']
+    articleText = df.iloc[i]['Text']
+    response = Query_BAM(Prompt_Input(prompt_text, articleTitle, articleText))
+    try:
+        output_text = response.json()['results'][0]['generated_text'].replace('---', '').replace(' ', '').replace('\n', '')
+        dct = json.loads(output_text)
+        #print(dct)
+        update_row_with_dict(df, dct, i)
+        #print(df.iloc[i])
+    except:
+        print(f'Error reconverting output to dictionary on row {i}')

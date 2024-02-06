@@ -106,7 +106,14 @@ def create_df(articles) :
 
     df = pd.DataFrame(dct)
 
-    run_llm(df)
+    #Intialize the dataframe to add the 5 extra columns
+    _, row_len = df.shape
+    cols_to_add = ["Country", "ShortTerm_IRtrend", "LongTerm_IRtrend", "ConsumerSpending", "Production", "Employment", "Inflation", "Geopolitics", "NetSentiment"]
+    for i in range(len(cols_to_add)) :
+        df.insert(row_len, cols_to_add[i], None)
+        row_len += 1
+
+    #run_llm(df)
     
     return df
 
