@@ -1,18 +1,18 @@
 module.exports = {
-  pathPrefix: "/solution-[Insert-Solution-Name]",
+  pathPrefix: "/solution-watsonx-news-scraper",
   siteMetadata: {
-    title: '[Insert Solution Name]',
-    description: 'IBM Client Engineering | [Insert Solution Name]',
-    keywords: 'IBM, Client Engineering, [Insert Solution Name]',
+    title: 'Watsonx News Scraper',
+    description: 'IBM Client Engineering | Watsonx News Scraper',
+    keywords: 'IBM, Client Engineering, Watsonx News Scraper',
   },
   plugins: [
     {
       resolve: 'gatsby-plugin-manifest',
       options: {
-        name: 'IBM Client Engineering | [Insert Solution Name]',
+        name: 'IBM Client Engineering | Watsonx News Scraper',
         icon: 'src/images/favicon.svg',
-        short_name: '[Insert Solution Name]',
-        start_url: '/solution-[Insert-Solution-Name]',
+        short_name: 'Watsonx News Scraper',
+        start_url: '/solution-watsonx-news-scraper',
         background_color: '#ffffff',
         theme_color: '#161616',
         display: 'browser',
@@ -28,7 +28,7 @@ module.exports = {
         isSwitcherEnabled: false,
         titleType: 'prepend',
         repository: {
-          baseUrl: 'https://github.com/ibm-client-engineering/solution-[Insert-Solution-Name]',
+          baseUrl: 'https://github.com/ibm-client-engineering/solution-watsonx-news-scraper',
         },
       },
     },
