@@ -28,7 +28,7 @@ module.exports = {
         isSwitcherEnabled: false,
         titleType: 'prepend',
         repository: {
-          baseUrl: 'https://github.com/ibm-client-engineering/solution-[Insert-Solution-Name]',
+          baseUrl: 'https://github.com/ibm-client-engineering/solution-watsonx-news-scraper',
         },
       },
     },
