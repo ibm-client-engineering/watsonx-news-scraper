@@ -3,9 +3,9 @@ from bs4 import BeautifulSoup
 import re
 from dateutil import parser
 import pandas as pd
-from util import remove_formatting
+from .util import remove_formatting
 import streamlit as st
-from Watsonx_connection import run_llm
+from .Watsonx_connection import run_llm
 
 #CNN
 @st.cache_data
@@ -39,7 +39,7 @@ def scrape_cnn() :
         dt = parser.parse(timestr[digits.start(0):])
 
         try :
-            cnn_articles.append(['CNN', remove_formatting(cnn_title.text),remove_formatting(content), dt])
+            cnn_articles.append(['CNN', remove_formatting(cnn_title.text),remove_formatting(content), dt, link])
         
         except:
             print("This article has no text!")
@@ -78,30 +78,32 @@ def scrape_cnbc() :
         dt = parser.parse(cnbc_time['datetime'])
 
         try :
-            cnbc_articles.append(['CNBC', remove_formatting(cnbc_title.text), remove_formatting(content), dt])
+            cnbc_articles.append(['CNBC', remove_formatting(cnbc_title.text), remove_formatting(content), dt, clink])
         except:
             print("This article has no text!")
 
     return cnbc_articles
 
-@st.cache_resource(show_spinner="Retrieving articles and running watsonx...")
 def create_df(articles) :
     sources_lst = []
     title_lst = []
     text_lst = []
     date_lst = []
+    link_lst = []
 
     for i in range(len(articles)) :
         sources_lst.append(articles[i][0])
         title_lst.append(articles[i][1])
         text_lst.append(articles[i][2])
         date_lst.append(articles[i][3])
+        link_lst.append(articles[i][4])
     
     dct = {
     'Source': sources_lst,
     'Title' : title_lst,
     'Text': text_lst,
-    'Date': date_lst
+    'Date': date_lst,
+    'Link': link_lst
     }
 
     df = pd.DataFrame(dct)
@@ -116,4 +118,12 @@ def create_df(articles) :
     #run_llm(df)
     
     return df
+
+@st.cache_resource(show_spinner="Retrieving articles")
+def do_webscrape() :
+    cnn_articles = scrape_cnn()
+    cnbc_articles = scrape_cnbc()
+    combined_articles = cnn_articles + cnbc_articles
+
+    return create_df(combined_articles)
 

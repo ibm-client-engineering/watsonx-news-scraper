@@ -2,7 +2,8 @@ from ibm_watson_machine_learning.metanames import GenTextParamsMetaNames as GenP
 from ibm_watson_machine_learning.foundation_models import Model
 import requests
 import json
-from util import update_row_with_dict
+from .util import update_row_with_dict
+from Webscraper_tools import prompt
 
 BAM_API_Key = ""
 BAM_URL = ""
@@ -52,8 +53,7 @@ def Query_WX(text) :
 def run_llm(df) :
 
     num_rows, row_len = df.shape
-    prompt_f = open("Prompt.txt")
-    prompt_text = prompt_f.read()
+    prompt_text = prompt
 
     # #Intialize the dataframe to add the 5 extra columns
     # cols_to_add = ["Country", "ShortTerm_IRtrend", "LongTerm_IRtrend", "ConsumerSpending", "Production", "Employment", "Inflation", "Geopolitics", "NetSentiment"]
@@ -79,8 +79,8 @@ def run_llm(df) :
 
 
 def do_single_llm(df, i) :
-    prompt_f = open("Prompt.txt")
-    prompt_text = prompt_f.read()
+    #prompt_f = open("Prompt.txt")
+    prompt_text = prompt
     articleTitle = df.iloc[i]['Title']
     articleText = df.iloc[i]['Text']
     response = Query_BAM(Prompt_Input(prompt_text, articleTitle, articleText))

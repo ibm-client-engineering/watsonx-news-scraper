@@ -1,10 +1,10 @@
 import pandas as pd
 import streamlit as st
-from Webscrape import *
-from Watsonx_connection import do_single_llm
+from Webscraper_tools.Webscrape import *
+from Webscraper_tools.Watsonx_connection import do_single_llm
 
 st.set_page_config(layout="wide")
-st.title("Watson:blue[x] Webscraper")
+st.title("News Sentiment Analysis with Watson:blue[x]")
 
 
 #Column populating function
@@ -16,13 +16,6 @@ def populate_columns() :
    
    st.session_state['selected'] = True
    st.session_state['button_clicked'] = False
-
-def do_webscrape() :
-    cnn_articles = scrape_cnn()
-    cnbc_articles = scrape_cnbc()
-    combined_articles = cnn_articles + cnbc_articles
-
-    return create_df(combined_articles)
 
 def refresh() :
    create_df.clear()
@@ -80,10 +73,7 @@ if st.session_state['button_clicked'] :
       st.write(df.iloc[st.session_state['article_id']]['Text'])
       if st.session_state['analysis_run'][st.session_state['article_id']] == 1 :
          #render_df()
-         st.dataframe(pd.DataFrame(df.iloc[st.session_state['article_id'], 4:12]).T.reset_index(drop=True))
+         st.dataframe(pd.DataFrame(df.iloc[st.session_state['article_id'], 5:13]).T.reset_index(drop=True))
       else :
          st.button("Run Watsonx Analysis", on_click=run_wx_single, args=(df, st.session_state['article_id']))
       
-
-
-
