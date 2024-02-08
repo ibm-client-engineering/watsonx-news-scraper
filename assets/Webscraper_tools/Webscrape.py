@@ -5,7 +5,7 @@ from dateutil import parser
 import pandas as pd
 from .util import remove_formatting
 import streamlit as st
-from .Watsonx_connection import run_llm
+
 
 #CNN
 @st.cache_data

@@ -75,6 +75,7 @@ if st.session_state['selected'] :
 if st.session_state['button_clicked'] :
     with col2:
       st.subheader(df.iloc[st.session_state['article_id']]['Title'])
+      st.caption(df.iloc[st.session_state['article_id']]['Date'].strftime('Published %B %d, %Y at %I:%M %p %Z'))
       st.write(df.iloc[st.session_state['article_id']]['Text'])
       if st.session_state['analysis_run'][st.session_state['article_id']] == 1 :
          #render_df()
