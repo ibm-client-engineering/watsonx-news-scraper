@@ -1,5 +1,6 @@
 import pandas as pd
 import streamlit as st
+import time
 from Webscraper_tools.Webscrape import *
 from Webscraper_tools.Watsonx_connection import do_single_llm
 
@@ -18,11 +19,15 @@ def populate_columns() :
    st.session_state['button_clicked'] = False
 
 def refresh() :
-   create_df.clear()
+   do_webscrape.clear()
 
 def run_wx_single(df, i) :
+   start_time = time.time()
    st.session_state['analysis_run'][i] = 1
-   do_single_llm(df, i)
+   with col2:
+      with st.spinner("Doing sentiment analysis") :
+         do_single_llm(df, i)
+      st.success(f"Completed Analysis in {time.time() - start_time} seconds", icon="✅")
 
 def render_df() :
    datfram = pd.DataFrame(df.iloc[st.session_state['article_id'], 4:12]).T
@@ -73,7 +78,7 @@ if st.session_state['button_clicked'] :
       st.write(df.iloc[st.session_state['article_id']]['Text'])
       if st.session_state['analysis_run'][st.session_state['article_id']] == 1 :
          #render_df()
-         st.dataframe(pd.DataFrame(df.iloc[st.session_state['article_id'], 5:13]).T.reset_index(drop=True))
+         st.dataframe(pd.DataFrame(df.iloc[st.session_state['article_id'], 5:12]).T.reset_index(drop=True))
       else :
          st.button("Run Watsonx Analysis", on_click=run_wx_single, args=(df, st.session_state['article_id']))
       

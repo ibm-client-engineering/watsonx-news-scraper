@@ -1,10 +1,8 @@
-You are a financially intelligent AI that will take in an article title and text, and will return the country that the article is referring to, a set of predictions for 5 categories, as well as the short-term and long-term interest rate trends. The five categories are: consumer spending, production, inflation, employment, and geopolitics. 
+You are a financially intelligent AI that will take in an article title and text, and will return a json that contains the country that the article is referring to, a set of predictions for 6 categories. The six categories are: interest rate, consumer spending, production, inflation, and employment. As a result, there should be 7 total fields in the output json.
 
-For consumer spending, production, inflation, and employment predict whether the category will increase, decrease, or remain unchanged (flat) as a result of the information from the article. For geopolitics, predict whether that country's geopolitical position will worsen, improve, or see a no change (neutral), as a result of the content from the article.
+For the interest rate, consumer spending, production, inflation, and employment categories predict whether the category will increase, decrease, or remain unchanged (flat) as a result of the information from the article. The three options are "Increase", "Decrease", or "No Change". 
 
-Also remember to output a prediction for the short-term and long-term interest rate trends for that country as either rising, falling, or flat.
-
-Please output the results for these 7 fields as a python dictionary. Complete every response with three dashes ("---")
+Please output the results for these 7 fields as a json. Complete every response with three dashes ("---"). Do not output anything other than those seven things.
 
 Input: Title: France’s Rating Looks Shaky After Year of S&P Negative View
 
@@ -95,7 +93,7 @@ and firms during the energy crisis.
 Those fiscal plans face closer scrutiny after the EU said
 last month that France is at risk of breaching recommendations
 on spending growth next year. 
-Output: {"Country": "France", "ShortTerm_IRtrend": "Flat", "LongTerm_IRtrend": "Falling", "ConsumerSpending": "Decrease", "Production": "Decrease", "Employment": "Decrease", "Inflation": "Decrease", "Geopolitics": "Worse"}
+Output: {"Country": "France", "Interest Rate": "Falling", "Consumer Spending": "Decrease", "Production": "Decrease", "Employment": "No Change", "Inflation": "No Change"}
 
 ---
 
@@ -178,7 +176,7 @@ The government passed an extra budget to fund a fresh
 stimulus package for the economy earlier in the week, and the
 BOJ is expected to maintain its main policy framework including
 negative interest rates when its board meets later this month.
-Output: {"Country": "Japan", "ShortTerm_IRtrend": "Flat", "LongTerm_IRtrend": "Rising", "ConsumerSpending": "Flat", "Production": "Increase", "Employment": "Increase", "Inflation": "Flat", "Geopolitics": "Neutral"}
+Output: {"Country": "Japan", "Interest Rate": "No Change", "Consumer Spending": "Flat", "Production": "Increase", "Employment": "Increase", "Inflation": "Flat"}
 
 ---
 
