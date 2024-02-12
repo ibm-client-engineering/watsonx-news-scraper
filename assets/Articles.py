@@ -20,6 +20,8 @@ def populate_columns() :
 
 def refresh() :
    do_webscrape.clear()
+   scrape_cnbc.clear()
+   scrape_cnn.clear()
 
 def run_wx_single(df, i) :
    start_time = time.time()
