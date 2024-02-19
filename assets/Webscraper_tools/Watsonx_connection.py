@@ -2,7 +2,9 @@ from ibm_watson_machine_learning.metanames import GenTextParamsMetaNames as GenP
 from ibm_watson_machine_learning.foundation_models import Model
 import requests
 import json
-from util import update_row_with_dict
+from .util import update_row_with_dict, get_net_sentiment
+from Webscraper_tools import prompt
+import traceback
 
 BAM_API_Key = ""
 BAM_URL = ""
@@ -26,7 +28,7 @@ def Query_BAM(prompt) :
     body['parameters']['decoding_method'] = 'greedy'
     body['parameters']['include_stop_sequence'] = True
     body['parameters']['stop_sequences'] = ['---']
-    body['parameters']['max_new_tokens'] = 500
+    body['parameters']['max_new_tokens'] = 200
 
     headers = {'Authorization': f'Bearer {BAM_API_Key}'}
     return requests.post(BAM_URL, json=body, headers=headers)
@@ -52,14 +54,13 @@ def Query_WX(text) :
 def run_llm(df) :
 
     num_rows, row_len = df.shape
-    prompt_f = open("Prompt.txt")
-    prompt_text = prompt_f.read()
+    prompt_text = prompt
 
-    #Intialize the dataframe to add the 5 extra columns
-    cols_to_add = ["Country", "ShortTerm_IRtrend", "LongTerm_IRtrend", "ConsumerSpending", "Production", "Employment", "Inflation", "Geopolitics", "NetSentiment"]
-    for i in range(len(cols_to_add)) :
-        df.insert(row_len, cols_to_add[i], None)
-        row_len += 1
+    # #Intialize the dataframe to add the 5 extra columns
+    # cols_to_add = ["Country", "ShortTerm_IRtrend", "LongTerm_IRtrend", "ConsumerSpending", "Production", "Employment", "Inflation", "Geopolitics", "NetSentiment"]
+    # for i in range(len(cols_to_add)) :
+    #     df.insert(row_len, cols_to_add[i], None)
+    #     row_len += 1
 
     #Running LLM
     results = []
@@ -73,6 +74,24 @@ def run_llm(df) :
             dct = json.loads(output_text)
             results.append(dct)
             update_row_with_dict(df, dct, i)
+            get_net_sentiment(df, i)
         except:
             results.append({})
             print(f'Error reconverting output to dictionary on row {i}')
+
+
+def do_single_llm(df, i) :
+    #prompt_f = open("Prompt.txt")
+    prompt_text = prompt
+    articleTitle = df.iloc[i]['Title']
+    articleText = df.iloc[i]['Text']
+    response = Query_BAM(Prompt_Input(prompt_text, articleTitle, articleText))
+    try:
+        #print(response.json()['results'])
+        output_text = response.json()['results'][0]['generated_text'].replace('---', '').replace('\n', '')
+        dct = json.loads(output_text)
+        update_row_with_dict(df, dct, i)
+        get_net_sentiment(df, i)
+    except Exception as e:
+        print(f'Error reconverting output to dictionary on row {i}')
+        #print(traceback.format_exc(e))
