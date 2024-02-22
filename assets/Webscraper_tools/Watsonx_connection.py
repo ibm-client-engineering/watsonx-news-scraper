@@ -5,9 +5,21 @@ import json
 from .util import update_row_with_dict, get_net_sentiment
 from Webscraper_tools import prompt
 import traceback
+from genai.client import Client
+from genai.credentials import Credentials
+from genai.schema import (
+    DecodingMethod,
+    ModerationStigma,
+    ModerationParameters,
+    TextGenerationParameters,
+)
+from langchain_core.callbacks.base import BaseCallbackHandler
+from genai.extensions.langchain import LangChainInterface
+from tqdm.auto import tqdm
 
 BAM_API_Key = ""
 BAM_URL = ""
+model_id = "thebloke/mixtral-8x7b-v0-1-gptq"
 with open('API_creds.json') as f :
     creds = json.load(f)
     BAM_API_Key = creds["BAM_Key"]
@@ -23,7 +35,9 @@ def Prompt_Input(prompt, articleTitle, articleText) :
     Output:'''
     return prompt + input
 
-def Query_BAM(prompt) :
+
+#Returns the generated text
+def Query_BAM_REST(prompt) :
     body = {'model_id': 'ibm/granite-13b-instruct-v2', 'input': prompt, 'parameters': {}}
     body['parameters']['decoding_method'] = 'greedy'
     body['parameters']['include_stop_sequence'] = True
@@ -31,7 +45,24 @@ def Query_BAM(prompt) :
     body['parameters']['max_new_tokens'] = 200
 
     headers = {'Authorization': f'Bearer {BAM_API_Key}'}
-    return requests.post(BAM_URL, json=body, headers=headers)
+    return requests.post(BAM_URL, json=body, headers=headers).json()['results'][0]['generated_text']
+
+#Returns the generated text
+def Query_BAM(prompt) :
+    client = Client(credentials=Credentials(api_key=BAM_API_Key, api_endpoint=BAM_URL))
+    parameters = TextGenerationParameters(
+        max_new_tokens=200,
+        decoding_method=DecodingMethod.GREEDY,
+        include_stop_sequence=True,
+        stop_sequences=['---']
+    )
+    llm = LangChainInterface(
+        model_id=model_id,
+        client=client,
+        parameters=parameters
+    )
+    return llm.generate(prompts=[prompt]).generations[0][0].text
+
 
 def Query_WX(text) :
     my_credentials = { 
@@ -69,7 +100,7 @@ def run_llm(df) :
         articleText = df.iloc[i]['Text']
         response = Query_BAM(Prompt_Input(prompt_text, articleTitle, articleText))
         try:
-            output_text = response.json()['results'][0]['generated_text'].replace('---', '').replace(' ', '').replace('\n', '')
+            output_text = response.replace('---', '').replace(' ', '').replace('\n', '')
             #print(output_text)
             dct = json.loads(output_text)
             results.append(dct)
@@ -88,7 +119,7 @@ def do_single_llm(df, i) :
     response = Query_BAM(Prompt_Input(prompt_text, articleTitle, articleText))
     try:
         #print(response.json()['results'])
-        output_text = response.json()['results'][0]['generated_text'].replace('---', '').replace('\n', '')
+        output_text = response.replace('---', '').replace('\n', '')
         dct = json.loads(output_text)
         update_row_with_dict(df, dct, i)
         get_net_sentiment(df, i)
