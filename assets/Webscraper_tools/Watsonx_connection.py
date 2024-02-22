@@ -3,7 +3,7 @@ from ibm_watson_machine_learning.foundation_models import Model
 import requests
 import json
 from .util import update_row_with_dict, get_net_sentiment
-from Webscraper_tools import prompt
+from Webscraper_tools import prompt, single_article_summary_prompt
 import traceback
 from genai.client import Client
 from genai.credentials import Credentials
@@ -19,7 +19,7 @@ from tqdm.auto import tqdm
 
 BAM_API_Key = ""
 BAM_URL = ""
-model_id = "thebloke/mixtral-8x7b-v0-1-gptq"
+model_id = 'ibm-mistralai/mixtral-8x7b-instruct-v01-q'#"thebloke/mixtral-8x7b-v0-1-gptq"
 with open('API_creds.json') as f :
     creds = json.load(f)
     BAM_API_Key = creds["BAM_Key"]
@@ -33,6 +33,14 @@ def Prompt_Input(prompt, articleTitle, articleText) :
 
     Text: {articleText}
     Output:'''
+    return prompt + input
+
+def Prompt_Input_Single_Article_Summary(prompt, articleTitle, articleText) :
+    input = f'''
+    Title: {articleTitle}
+
+    Text: {articleText}
+    <|assistant|>'''
     return prompt + input
 
 
@@ -61,7 +69,9 @@ def Query_BAM(prompt) :
         client=client,
         parameters=parameters
     )
-    return llm.generate(prompts=[prompt]).generations[0][0].text
+    response = llm.generate(prompts=[prompt])
+    #print(response.generations[0][0])
+    return response.generations[0][0].text
 
 
 def Query_WX(text) :
@@ -124,5 +134,20 @@ def do_single_llm(df, i) :
         update_row_with_dict(df, dct, i)
         get_net_sentiment(df, i)
     except Exception as e:
-        print(f'Error reconverting output to dictionary on row {i}')
+        print(f'Error retrieving output to dictionary on row {i}')
         #print(traceback.format_exc(e))
+
+#Run summary for bullet point summary on single article (id i in dataframe df)
+def single_article_summary(df, i) :
+    prompt_text = single_article_summary_prompt
+    articleTitle = df.iloc[i]['Title']
+    articleText = df.iloc[i]['Text']
+    output_text = Query_BAM(Prompt_Input_Single_Article_Summary(prompt_text, articleTitle, articleText))
+    try:
+        #print(response.json()['results'])
+        output_text = output_text.replace("$", "\$")
+        df.loc[i, 'Summary'] = output_text
+        return output_text
+    except Exception as e:
+        print(f'Error retrieving output to dictionary on row {i}')
+        return ""
