@@ -10,7 +10,7 @@ import streamlit as st
 #CNN
 @st.cache_data
 def scrape_cnn() :
-    cnn_URL = "https://www.cnn.com/business/economy"
+    cnn_URL = "https://www.cnn.com/business"
     cnn_page = requests.get(cnn_URL)
 
     cnn_soup = BeautifulSoup(cnn_page.content, "html.parser")
@@ -51,7 +51,7 @@ def scrape_cnn() :
 #CNBC
 @st.cache_data
 def scrape_cnbc() :
-    cnbc_URL = "https://www.cnbc.com/economy/"
+    cnbc_URL = "https://www.cnbc.com/business/"
     cnbc_page = requests.get(cnbc_URL)
 
     cnbc_soup = BeautifulSoup(cnbc_page.content, "html.parser")

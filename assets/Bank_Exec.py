@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 import time
 from Webscraper_tools.Webscrape import *
-from Webscraper_tools.Watsonx_connection import single_article_summary
+from Webscraper_tools.Watsonx_connection import single_article_summary, get_full_summary
 
 st.set_page_config(layout="wide")
 st.title("News Analysis with Watson:blue[x]")
@@ -22,6 +22,7 @@ def refresh() :
    do_webscrape.clear()
    scrape_cnbc.clear()
    scrape_cnn.clear()
+   st.session_state["summary_try"] = False
 
 def run_wx_single(df, i) :
    start_time = time.time()
@@ -51,15 +52,34 @@ if 'article_id' not in st.session_state :
 topcol1, topcol2 = st.columns([.85, .1])
 with topcol2 :
    st.button("Refresh Webscrape", on_click=refresh, key="refresh_button")
-st.selectbox("Select a news source", ("CNN", "CNBC"), on_change=populate_columns, key="source_selection", index=None, placeholder="News Source")
-col1, col2 = st.columns([.3, .7])
+
 
 
 
 #Program
 df = do_webscrape()
 num_articles, _ = df.shape
+if "summary_success" not in st.session_state :
+   st.session_state["summary_success"] = False
 
+#Summary Dashboard (commented out for now the prompting is broken)
+if "summary_try" not in st.session_state or not st.session_state["summary_try"]:
+   st.session_state["summary_try"] = True
+   st.session_state["summary_success"] = get_full_summary(df)
+
+if st.session_state['summary_success'] :
+   for cat in df.Category.unique() :
+      #print("Category: " + cat)
+      st.write("**" + str(cat) + "**")
+      for _, row_in_category in df.loc[df["Category"] == cat].iterrows() :
+         #print(row_in_category)
+         if row_in_category["Summary"] :
+            st.write("- " + row_in_category["Summary"])
+else :
+   st.write("Summary retrieval failure")
+
+st.selectbox("Select a news source", ("CNN", "CNBC"), on_change=populate_columns, key="source_selection", index=None, placeholder="News Source")
+col1, col2 = st.columns([.3, .7])
 if 'analysis_run' not in st.session_state :
    st.session_state['analysis_run'] = [0] * num_articles
 
@@ -81,7 +101,7 @@ if st.session_state['button_clicked'] :
       st.write(df.iloc[st.session_state['article_id']]['Text'])
       if st.session_state['analysis_run'][st.session_state['article_id']] == 1 :
          #render_df()
-         df.iloc[st.session_state['article_id']]['Summary']
+         df.iloc[st.session_state['article_id']]['Multi-Point Summary']
       else :
          st.button("Run Watson:blue[x] Analysis", on_click=run_wx_single, args=(df, st.session_state['article_id']))
       
