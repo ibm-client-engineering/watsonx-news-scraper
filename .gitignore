@@ -69,3 +69,5 @@ yarn-error.log
 .yarn-integrity
 
 assets/API_creds.json
+
+__pycache__
