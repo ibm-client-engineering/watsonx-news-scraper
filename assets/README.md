@@ -12,3 +12,19 @@ For some reason, one of the dependencies for this project has a dependency itsel
 ## Python
 
 This is the easy part, after a quick `conda install python` and a following `pip install --upgrade pip`, run `pip install -r requirements.txt` from within the assets directory, and you should be all good to run the project.
+
+## Running The Project
+
+Once all of the prerequisites are in place, create a file `API_creds.json` and add the BAM URL and your BAM key:
+
+```
+{
+    "BAM_Key": PUT YOUR BAM KEY HERE,
+    "BAM_URL": PUT BAM URL HERE,
+}
+```
+
+
+In the future the plan is to support watsonx projects, but while this is still in development BAM is far more practical.
+
+Run the project by running `streamlit run Bank_Exec.py` (newsletter demo) or `streamlit run Articles.py` (sentiment demo).
