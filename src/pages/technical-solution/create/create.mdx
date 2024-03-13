@@ -63,7 +63,19 @@ While still under the **Manage** header, click on the **Services and integration
 
 Once the project has been created, we need to create an API key for our demo to use. Return to the IBM Cloud homepage and find the **Manage** header on the top. Navigate to **Manage** &rarr; **Access (IAM)** &rarr; **API Keys** and select **Create +**. Give the new API key a clear name such as "Watsonx Webscraper Demo", and a description if you would like. Once the key has been created, save it somewhere secure, as you will not be able to retrieve the key again. 
 
-Now go through the Webscrape_GUI.py file and input the API key and Project ID into the corresponding locations
+Now create a file in the assets folder called **API_creds.json** with this format:
+```
+{
+    "BAM_Key": PUT YOUR BAM KEY HERE,
+    "BAM_URL": PUT YOUR BAM URL HERE,
+    "WX_Key" : PUT YOUR WX KEY HERE,
+    "WX_Project" : PUT YOUR WX PROJECT ID HERE
+}
+```
+The BAM key and url can be ignored if you are using watson<span style="color:blue">x</span>.
 
+## Part 3: Streamlit
+
+The GUI for the app was created using streamlit. Streamlit is an easy to use python package for creating browser-based applications. Refer to the [streamlit documentation](https://docs.streamlit.io) to get started and learn more about how to use streamlit, both Articles.py and Bank_Exec.py in the /assets/ folder use streamlit frontends.
 
 
