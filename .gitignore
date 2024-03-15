@@ -71,3 +71,4 @@ yarn-error.log
 assets/API_creds.json
 
 __pycache__
+/assets/Webscraper_tools/__pycache__
