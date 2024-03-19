@@ -20,7 +20,7 @@ import streamlit as st
 
 BAM_API_Key = ""
 BAM_URL = ""
-model_id = 'ibm-mistralai/mixtral-8x7b-instruct-v01-q'#"thebloke/mixtral-8x7b-v0-1-gptq"
+model_id = "ibm-mistralai/mixtral-8x7b-instruct-v01-q"
 with open('API_creds.json') as f :
     creds = json.load(f)
     BAM_API_Key = creds["BAM_Key"]
@@ -70,7 +70,7 @@ def Query_BAM(prompt, num_tokens) :
     parameters = TextGenerationParameters(
         max_new_tokens=num_tokens,
         decoding_method=DecodingMethod.GREEDY,
-        include_stop_sequence=True,
+        include_stop_sequence=False,
         stop_sequences=['---']
     )
     llm = LangChainInterface(

@@ -2,6 +2,7 @@ import time
 import streamlit as st
 from Webscraper_tools.Webscrape import *
 from Webscraper_tools.Watsonx_connection import run_llm
+from menu import menu
 
 def run_pre_export(df) :
    start_time = time.time()
@@ -31,7 +32,7 @@ st.caption(f"There are {num_articles} articles in the database")
 if 'pre_export_run' not in st.session_state :
    st.session_state['pre_export_run'] = False
 
-if st.session_state['pre_export_run'] :
+if st.session_state['pre_export_run'] or st.session_state['role'] == 'bank':
    csv = convert_df(df)
    st.download_button(
     label="Download data as CSV",
@@ -42,3 +43,5 @@ if st.session_state['pre_export_run'] :
 else :
    st.button("Run Analysis for export", on_click=run_pre_export, args=(df,))
    
+
+menu()
